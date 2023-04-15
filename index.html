@@ -15,36 +15,38 @@
         <main class="main">
             <div class="calc">
                 <div class="calc__display display">
-                    <div class="display__history"></div>
-                    <div class="display__main"></div>
+                    <div class="display__history">
+                        <span class="display__first-number">10</span>
+                        <span class="display__operator">-</span>
+                        <span class="display__second-number">10</span>
+                    </div>
+                    <div class="display__main">3 351 253 923 507</div>
                 </div>
                 <div class="calc__buttons">
                 
-                    <div class="row1__button button"><button>С</button></div>
-                    <div class="row1__button button"><button>*</button></div>
-                    <div class="row1__button button"><button>/</button></div>
-                    <div class="row1__button button"><button>B</button></div>
+                    <button class="button__operate" id="clear">С</button>
+                    <button class="button__operate" id="multiply"><span>*</span></button>
+                    <button class="button__operate" id="divide">/</button>
+                    <button class="button__operate" id="backspace"><span>&#8592;</span></button>
+                               
+                    <button class="button" id="7">7</button>
+                    <button class="button" id="8">8</button>
+                    <button class="button" id="9">9</button>
+                    <button class="button__operate" id="sum">+</button>
                 
+                    <button class="button" id="4">4</button>
+                    <button class="button" id="5">5</button>
+                    <button class="button" id="6">6</button>
+                    <button class="button__operate" id="subtract">-</button>
                 
-                    <div class="row2__button button"><button>7</button></div>
-                    <div class="row2__button button"><button>8</button></div>
-                    <div class="row2__button button"><button>9</button></div>
-                    <div class="row2__button button"><button>+</button></div>
-                
-                    <div class="row3__button button"><button>4</button></div>
-                    <div class="row3__button button"><button>5</button></div>
-                    <div class="row3__button button"><button>6</button></div>
-                    <div class="row3__button button"><button>-</button></div>
-                
-                    <div class="row4__button button"><button>1</button></div>
-                    <div class="row4__button button"><button>2</button></div>
-                    <div class="row4__button button"><button>3</button></div>
-                    <div class="row4__button button"><button>=</button></div>
-                
-                    <div class="row5__button button"><button>+/-</button></div>
-                    <div class="row5__button button"><button>0</button></div>
-                    <div class="row5__button button"><button>.</button></div>
-                    <div class="row5__button button"><button>=</button></div>
+                    <button class="button" id="1">1</button>
+                    <button class="button" id="2">2</button>
+                    <button class="button" id="3">3</button>
+                                
+                    <button class="button" id="toggle">&#177;</button>
+                    <button class="button" id="0">0</button>
+                    <button class="button" id="point">.</button>
+                    <button class="button" id="equals">=</button>
                     
                 </div>
             </div>
