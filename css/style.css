@@ -13,9 +13,9 @@ html, body{
 }
 
 
-
 .wrapper {
     min-height: 100%;
+    background-color: #b86464;
     display: grid;
     grid-template: 1fr minmax(30px, auto) / 1fr;
     grid-template-areas: 
@@ -25,8 +25,42 @@ html, body{
 
 .main {
     grid-area: main;
-    background-color: #b86464;
+    display:flex;
+    
+    justify-content: center;
+    align-items: center;
+}
+
+.calc {
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #575353;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+
+    
+}
+
+.calc__display {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    height: 100px;
+    background-color: lightgray;
+    margin-bottom: 10px;
+    
+}
+
+.calc__buttons {
     display: grid;
+    grid-template: repeat(5, 1fr)/ repeat(4, 1fr);
+    grid-gap: 1vw;
+}
+
+.calc__buttons button {
+    padding: 5px 10px;
+    min-width: 40px;
 }
 
 .footer {
