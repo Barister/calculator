@@ -46,6 +46,7 @@ const listenToButtons = function (event) {
                 break;
             case 'button__point':
                 // console.log('сработала кнопка point!');
+                pointButton();
                 break;
             case 'button__equals':
                 // console.log('сработала кнопка equals!');
@@ -86,12 +87,18 @@ function numberButton(button) {
         showHistory();
     }
 
+    else if (displayNumber.value.includes('.')) {
+        console.log('Есть точка в числе!:', displayNumber.value+button);
+        currentNumber = displayNumber.value + button;
+    }
+
     else {
         currentNumber = parseInt(`${currentNumber}${button}`);
         console.log("Сработала конкатенация числа!");
     }
 
     showDisplayNumber();
+    currentNumber = parseFloat(currentNumber);
     
 }
 
@@ -176,6 +183,15 @@ function backspaceButton() {
     }
 }
 
+function pointButton() {
+    if (!displayNumber.value.includes('.')) {
+        console.log('точки нет!', 1.);
+        toShowNumber = displayNumber.value+'.';
+        currentNumber = parseFloat(toShowNumber).toFixed(0);
+        console.log('cN после нажатия на точку:', currentNumber);
+        showDisplayNumber();
+    }
+}
 
 allButtons.addEventListener('click', event => listenToButtons(event));
 
@@ -194,12 +210,42 @@ function showDisplayNumber () {
 
 showDisplayNumber();
 
+let fixedToLength = 0;
+
+function countDecimalPlaces(num) {
+  const match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+  if (!match) {
+    return 0;
+  }
+  const fractionalPart = match[1] ? match[1].length : 0;
+  const exponent = match[2] ? parseInt(match[2]) : 0;
+  return Math.max(0, fractionalPart - exponent);
+}
+
+function toCompareNumbers(){
+    let currentNumberLength = countDecimalPlaces(currentNumber);
+    let previousNumberLength = countDecimalPlaces(previousNumber);
+
+    if (currentNumber % 1 !== 0 || previousNumber % 1 !== 0) {
+        if (currentNumberLength >= previousNumberLength) {
+            console.log('количество знаков после запятой у cN:', currentNumberLength);
+            return decimalPlaces = currentNumberLength;
+        }
+        else if (previousNumberLength > currentNumberLength) {
+            console.log('количество знаков после запятой у pN:', previousNumberLength);
+            return decimalPlaces = previousNumberLength;
+        }
+    }
+    decimalPlaces = 1;
+
+}
+
 
 
 function equals() {
     console.log('запускаем уравнение');
     console.log('значения переменных:', 'pN', previousNumber, 'op', operator, 'cN',currentNumber);
-    
+       
     if (currentNumber === 0 && previousNumber === null && operator === null) {
         console.log('сработала равно return');
         return;
@@ -216,6 +262,14 @@ function equals() {
         lastNumber = currentNumber
         console.log('lastNumber:', lastNumber);
     };
+
+    // lets try to know a number of simbols after comma
+
+    toCompareNumbers();    
+
+    // currentNumber = currentNumber*(10**decimalPlaces);
+    // previousNumber = previousNumber*(10**decimalPlaces);
+    // console.log('после возведения в степень равно переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
 
     switch (operator) {
         case '*': 
@@ -235,6 +289,22 @@ function equals() {
             currentNumber = previousNumber - currentNumber;
             break;
     }
+    console.log('после операции до возврата:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
+    
+    // previousNumber = previousNumber* (1/(10**decimalPlaces)).toFixed(decimalPlaces);
+    let decimalPlacesAfter = countDecimalPlaces(currentNumber);
+
+    
+    if (currentNumber % 1 !== 0 && decimalPlacesAfter > 12) {
+        console.log('нужно уменьшить число до n знаков')
+        currentNumber = parseFloat(currentNumber.toFixed(decimalPlaces));
+    }
+    
+    else if (currentNumber % 1 === 0) {
+        currentNumber = parseInt(currentNumber);
+    }
+    
+    console.log('после операции возврата переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
     toShowNumber = currentNumber;
     historyDisplay = previousNumber + operator + lastNumber + '=';
     console.log('historyDisplay:', historyDisplay);
@@ -245,7 +315,9 @@ function equals() {
     lastOperator = operator;
     console.log('lastOperator после equals():', lastOperator);
     operator = null;
-    console.log('после операции равно переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
+    console.log('после операции итого равно переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
+    
+    
     showDisplayNumber();
     showHistory();
     
