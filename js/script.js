@@ -10,50 +10,48 @@ let switcherEquals = false;
 let toShowNumber = null;
 let lastNumber = null;
 
-// console.log('type of null:', typeof null);
-// console.log('true of 0 == null:', 0 == null);
-
-
 const displayNumber = document.querySelector('.display__main');
 const displayHistory = document.querySelector('.display__history');
 const allButtons = document.querySelector('.calc__buttons');
 
-//console.log('main__display:', displayNumber);
+// to add input EventListener to restrict maxlength of displayNumber
+displayNumber.addEventListener('input', event => {
+    const maxLength = event.target.maxLength;
+    console.log(maxLength);
+    let currentValue = event.target.value;
+
+    if (currentValue.length > maxLength) {
+        console.log('currentValue превысило maxLength:', event.target.value.length);
+        event.target.value = currentValue.slice(0,maxLength);
+    }
+});
 
 //to choice the function depending button's class click
 const listenToButtons = function (event) {
     if(event.target.closest('button')) {
         let clickedClass = event.target.closest('button').classList.value;
         let clickedId = event.target.closest('button').id;
-        //console.log('clickedButton.id:', clickedId);
-
+        
         switch (clickedClass) {
             case 'button__operate':
-                // console.log('сработала кнопка operate!:', event.target.closest('button').innerText);
                 operateButton(event.target.closest('button').innerText);
                 break;
             case 'button__clear':
-                // console.log('сработала кнопка clear!');
                 clearButton();
                 break;
             case 'button__int':
-                // console.log('сработала кнопка int!');
                 numberButton(parseInt(clickedId));
                 break;
             case 'button__toggle':
-                // console.log('сработала кнопка toggle!');
                 toggleButton();
                 break;
             case 'button__point':
-                // console.log('сработала кнопка point!');
                 pointButton();
                 break;
             case 'button__equals':
-                // console.log('сработала кнопка equals!');
                 equals();
                 break;
             case 'button__backspace': 
-                // console.log('сработала кнопка backspace!');
                 backspaceButton();
                 break;
         }
@@ -61,15 +59,14 @@ const listenToButtons = function (event) {
     }
 }
 
-//if pressed numbers
+//if pressed numbers calc does. Sorry for all that branches
 function numberButton(button) {
-//  
+
     if (switcherOperate === false && switcherEquals === true) {
         console.log('бинго для кнопки цифры');
         switcherEquals = false;
         currentNumber = button;
-        //operator = lastOperator;
-        historyDisplay = previousNumber+operator;
+        historyDisplay = previousNumber + ' ' + operator;
         showHistory();
     }
 
@@ -97,6 +94,13 @@ function numberButton(button) {
         console.log("Сработала конкатенация числа!");
     }
 
+    //to restrict maximumNumber
+
+    if (currentNumber.length > displayNumber.maxLength) {
+        console.log('currentNumber.length превысило maxLength:');
+        currentNumber = currentNumber.slice(0,displayNumber.maxLength);
+    }
+
     showDisplayNumber();
     currentNumber = parseFloat(currentNumber);
     
@@ -111,32 +115,24 @@ function operateButton(button) {
         console.log('switcherEquals === true');
         operator = button;
         currentNumber = previousNumber;
-        historyDisplay = previousNumber + operator;
+        historyDisplay = previousNumber + ' ' + operator;
         showHistory();
         switcherEquals = false;
         switcherOperate = true;
     }
 
     else if (currentNumber && operator && previousNumber) {
-        //operator = button;
-        console.log('operator:', operator, typeof operator);
-        console.log('сработала условие: заполнены все значения', previousNumber, operator, currentNumber);
-        
         equals();
         operator = button;
-        //console.log(currentNumber); 
     }
 
     else if (switcherOperate === false) {
-        console.log('switcherOperate === false');
         operator = button;
-        previousNumber = currentNumber;
+        previousNumber = parseInt(currentNumber.toString().slice(0,displayNumber.maxLength));
         currentNumber = 0;
-        historyDisplay = previousNumber + operator;
+        historyDisplay = previousNumber + " " + operator;
         switcherOperate = true;
-        console.log('historyDisplay:', historyDisplay, operator);
         showHistory();
-        console.log('operator присвоен:', operator)
     }
 
     else {
@@ -156,15 +152,17 @@ function clearButton(button) {
     historyDisplay = '';
     switcherOperate = false;
     switcherEquals = false;
+    displayNumber.style.fontSize = "32px";
     showHistory();
     showDisplayNumber();
+
 }
 
 function toggleButton() {
     if(currentNumber !== 0){
 
         currentNumber = -displayNumber.value;
-        historyDisplay = historyDisplay + currentNumber;
+        historyDisplay = historyDisplay + ' ' + currentNumber;
         showHistory();
         
     }
@@ -205,6 +203,11 @@ function showDisplayNumber () {
         displayNumber.value = currentNumber;
     }
     
+    const inputEvent = new Event('input', {bubbles: true});
+    displayNumber.dispatchEvent(inputEvent);
+
+    
+
     //console.log(displayNumber);
 }
 
@@ -267,10 +270,6 @@ function equals() {
 
     toCompareNumbers();    
 
-    // currentNumber = currentNumber*(10**decimalPlaces);
-    // previousNumber = previousNumber*(10**decimalPlaces);
-    // console.log('после возведения в степень равно переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
-
     switch (operator) {
         case '*': 
             console.log('умножение');
@@ -291,7 +290,6 @@ function equals() {
     }
     console.log('после операции до возврата:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
     
-    // previousNumber = previousNumber* (1/(10**decimalPlaces)).toFixed(decimalPlaces);
     let decimalPlacesAfter = countDecimalPlaces(currentNumber);
 
     
@@ -300,13 +298,14 @@ function equals() {
         currentNumber = parseFloat(currentNumber.toFixed(decimalPlaces));
     }
     
-    else if (currentNumber % 1 === 0) {
+    else if (currentNumber % 1 === 0 && !currentNumber.toString().includes('e')) {
+        console.log('волюнтаристки изменилои число до 1го знака')
         currentNumber = parseInt(currentNumber);
     }
     
     console.log('после операции возврата переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
     toShowNumber = currentNumber;
-    historyDisplay = previousNumber + operator + lastNumber + '=';
+    historyDisplay = previousNumber + ' ' + operator + ' ' + lastNumber + ' =';
     console.log('historyDisplay:', historyDisplay);
     previousNumber = currentNumber;
     currentNumber = lastNumber;
@@ -320,7 +319,7 @@ function equals() {
     
     showDisplayNumber();
     showHistory();
-    
+    autoResize();
     
 }
 
@@ -329,6 +328,34 @@ function equals() {
 //let's try to make historyDisplay
 
 function showHistory () {
-    console.log('сработала функция historyDisplay')
+    //console.log('сработала функция historyDisplay')
     displayHistory.innerText = historyDisplay;
 }
+
+
+//let's try adjust font size if input.value > size of display
+function autoResize() {
+    console.log('сработала функция autoresize');
+  
+    let fontSize = parseInt(getComputedStyle(displayNumber).getPropertyValue("font-size"));
+    let width = displayNumber.offsetWidth;
+    let textWidth = getTextWidth(displayNumber.value, fontSize + "px " + getComputedStyle(displayNumber).getPropertyValue("font-family"));
+    
+
+    while (textWidth+10 > width) {
+        fontSize--;
+        textWidth = getTextWidth(displayNumber.value, fontSize + "px " + getComputedStyle(displayNumber).getPropertyValue("font-family"));
+        console.log('width:', width, 'textWidth:', textWidth);
+    }
+    
+    displayNumber.style.fontSize = fontSize + "px";
+}
+
+function getTextWidth(text, font) {
+    var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    var context = canvas.getContext("2d");
+    context.font = font;
+    var metrics = context.measureText(text);
+    return metrics.width;
+}
+

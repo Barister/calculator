@@ -15,12 +15,8 @@
         <main class="main">
             <div class="calc">
                 <div class="calc__display display">
-                    <div class="display__history">
-                        <!-- <span class="display__first-number"></span>
-                        <span class="display__operator"></span>
-                        <span class="display__second-number"></span> -->
-                    </div>
-                    <input class="display__main" maxlength="14" readonly value="0"></input>
+                    <div class="display__history"></div>
+                    <input class="display__main" maxlength="16" readonly value="0" oninput="autoResize()"></input>
                 </div>
                 <div class="calc__buttons">
                 

@@ -40,7 +40,7 @@ html, body{
     display: flex;
     flex-direction: column;
     padding: 15px;
-
+    max-width: 376px;
     
 }
 
@@ -61,12 +61,17 @@ html, body{
 .display__history {
     padding: 0 5px 5px 0;
     line-height: 1.5rem;
+    word-wrap: break-word;
+    position: relative;
+    text-align: end;
+    top: 10px;
+    max-width: 275px;
 }
 
 .display__main {
     font-size: 32px;
     line-height: 48px;
-    padding: 0 5px 10px 0;
+    padding: 0 5px 10px 5px;
     background-color: lightgray;
     border: none;
     text-align: end;
