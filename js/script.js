@@ -19,18 +19,16 @@ const allButtons = document.querySelector('.calc__buttons');
 // to add input EventListener to restrict maxlength of displayNumber
 displayNumber.addEventListener('input', event => {
     const maxLength = event.target.maxLength;
-    //console.log(maxLength);
     let currentValue = parseInt(event.target.value);
     let currentValueStr = currentValue.toString();
 
     if (currentValueStr.length > maxLength) {
-        console.log('currentValue превысило maxLength:', event.target.value.length);
         event.target.value = currentValue.toExponential(maxLength - 6);
         currentNumber = event.target.value;
     }
 });
 
-//to choice the function depending button's class click
+//to choose the function depending button's class click
 const listenToButtons = function (event) {
     if(event.target.closest('button')) {
         let clickedClass = event.target.closest('button').classList.value;
@@ -67,7 +65,6 @@ const listenToButtons = function (event) {
 function numberButton(button) {
 
     if (switcherOperate === false && switcherEquals === true) {
-        console.log('бинго для кнопки цифры');
         switcherEquals = false;
         currentNumber = button;
         historyDisplay = previousNumber + ' ' + operator;
@@ -77,46 +74,32 @@ function numberButton(button) {
     else if (switcherOperate === true) {
         currentNumber = button;
         switcherOperate = false;
-        console.log("Сработало присвоение cN после switchOperate === true!", 'cN:', currentNumber);
     }
 
     else if (switcherEquals === true) {
         currentNumber = button;
         switcherEquals = false;
         historyDisplay = '';
-        console.log("Сработало присвоение cN после switchEquals === true!");
         showHistory();
     }
 
     else if (displayNumber.value.includes('.')) {
-        console.log('Есть точка в числе!:', displayNumber.value+button);
         currentNumber = displayNumber.value + button;
     }
 
     else {
         currentNumber = parseInt(`${currentNumber}${button}`);
-        console.log("Сработала конкатенация числа!");
     }
-
-    //to restrict maximumNumber
-
-    // if (currentNumber.length > displayNumber.maxLength) {
-    //     console.log('currentNumber.length превысило maxLength:');
-    //     currentNumber = currentNumber.slice(0,displayNumber.maxLength);
-    // }
 
     showDisplayNumber();
     currentNumber = parseFloat(currentNumber);
-    
 }
 
 
-// нажатие кнопки с классом operate запускает функцию
+// to handle a press of operateButtons
 function operateButton(button) {
 
-    //if operator == null , 
     if (switcherEquals === true) {
-        console.log('switcherEquals === true');
         operator = button;
         if (switcherToggle === false) {
             currentNumber = previousNumber;
@@ -128,21 +111,17 @@ function operateButton(button) {
             historyDisplay = previousNumber + ' ' + operator;
             switcherToggle = false;
         }
-        
-        
         showHistory();
         switcherEquals = false;
         switcherOperate = true;
     }
 
     else if (currentNumber && operator && previousNumber) {
-        console.log('operate 2');
         equals();
         operator = button;
     }
 
     else if (switcherOperate === false) {
-        console.log('operate 3');
         operator = button;
         previousNumber = currentNumber;
         currentNumber = 0;
@@ -152,14 +131,12 @@ function operateButton(button) {
     }
 
     else {
-        console.log('operate 4');
-        console.log('Сработал последний вариант в operateButton');
         operator = button;
         historyDisplay = previousNumber + operator;
         showHistory();
     }
 }
-
+//some specific buttons
 function clearButton(button) {
     operator = null;
     previousNumber = null;
@@ -183,7 +160,6 @@ function toggleButton() {
         showHistory();
         
     }
-    console.log('сработала toggleButton, currentNumber =', currentNumber);
     switcherToggle = true;
     showDisplayNumber();
 }
@@ -196,27 +172,24 @@ function backspaceButton() {
     }
     
     else if (currentNumber !== 0) {
-        console.log('backspace currentNumber !== 0')
         currentNumber = displayNumber.value.toString().split('').slice(0, -1).join('');
         if (currentNumber == '') {
             currentNumber = 0
         }
-        console.log('currentNumber:', currentNumber);
         showDisplayNumber();
     }
 }
 
 function pointButton() {
     if (!displayNumber.value.includes('.')) {
-        console.log('точки нет!', 1.);
         toShowNumber = displayNumber.value+'.';
         currentNumber = parseFloat(toShowNumber).toFixed(0);
-        console.log('cN после нажатия на точку:', currentNumber);
         showDisplayNumber();
     }
 }
 
 allButtons.addEventListener('click', event => listenToButtons(event));
+
 
 function showDisplayNumber () {
     if (toShowNumber !== null) {
@@ -231,13 +204,12 @@ function showDisplayNumber () {
     const inputEvent = new Event('input', {bubbles: true});
     displayNumber.dispatchEvent(inputEvent);
 
-    
-
-    //console.log(displayNumber);
 }
 
 showDisplayNumber();
 
+
+//trying to solve issue with memory problems with float numbers in JS feat. ChatGPT
 let fixedToLength = 0;
 
 function countDecimalPlaces(num) {
@@ -256,11 +228,9 @@ function toCompareNumbers(){
 
     if (currentNumber % 1 !== 0 || previousNumber % 1 !== 0) {
         if (currentNumberLength >= previousNumberLength) {
-            console.log('количество знаков после запятой у cN:', currentNumberLength);
             return decimalPlaces = currentNumberLength;
         }
         else if (previousNumberLength > currentNumberLength) {
-            console.log('количество знаков после запятой у pN:', previousNumberLength);
             return decimalPlaces = previousNumberLength;
         }
     }
@@ -269,78 +239,59 @@ function toCompareNumbers(){
 }
 
 
-
+//to calc directly
 function equals() {
-    console.log('запускаем уравнение');
-    console.log('значения переменных в начале equal():', 'pN', previousNumber, 'op', operator, 'cN',currentNumber);
-       
+          
     if (currentNumber === 0 && previousNumber === null && operator === null) {
-        console.log('сработала равно return');
         return;
     }
     else if (!currentNumber) {
         currentNumber = parseInt(displayNumber.value);
-        console.log('присвоили currentNumner значение Экрана:', currentNumber);
     }
     else if(!operator) {
         operator = lastOperator;
-        console.log('operator был пустой, взяли значение:', lastOperator);
     }
     if (lastNumber === null) {
-        lastNumber = currentNumber
-        console.log('lastNumber:', lastNumber);
-    };
+        lastNumber = currentNumber;
+    }
 
-    // lets try to know a number of simbols after comma
+    // lets try to know a number of symbols after comma
 
     toCompareNumbers();    
 
     switch (operator) {
         case '*': 
-            console.log('умножение');
             currentNumber *= previousNumber;
             break;
         case '/':
-            console.log('divide');
             currentNumber = previousNumber / currentNumber;
             break;
         case '+':
-            console.log('sum');
             currentNumber += previousNumber;
             break;
         case '-':
-            console.log('subtract');
             currentNumber = previousNumber - currentNumber;
             break;
     }
-    console.log('после операции до возврата:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
-    
+        
     let decimalPlacesAfter = countDecimalPlaces(currentNumber);
-
     
     if (currentNumber % 1 !== 0 && decimalPlacesAfter > 12) {
-        console.log('нужно уменьшить число до n знаков')
         currentNumber = parseFloat(currentNumber.toFixed(decimalPlaces));
     }
     
     else if (currentNumber % 1 === 0 && !currentNumber.toString().includes('e')) {
-        console.log('волюнтаристки изменилои число до 1го знака')
         currentNumber = parseInt(currentNumber);
     }
     
-    console.log('после операции возврата переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
     toShowNumber = currentNumber;
     historyDisplay = previousNumber + ' ' + operator + ' ' + lastNumber + ' =';
-    console.log('historyDisplay:', historyDisplay);
     previousNumber = currentNumber;
     currentNumber = lastNumber;
     switcherEquals = true;
     lastNumber = null;
     lastOperator = operator;
-    console.log('lastOperator после equals():', lastOperator);
     operator = null;
-    console.log('после операции итого равно переменные:', 'pN:', previousNumber, 'op:', operator, 'cN:',currentNumber);
-    
     
     showDisplayNumber();
     showHistory();
@@ -348,29 +299,23 @@ function equals() {
     
 }
 
-
-
 //let's try to make historyDisplay
 
 function showHistory () {
-    //console.log('сработала функция historyDisplay')
     displayHistory.innerText = historyDisplay;
 }
 
 
-//let's try adjust font size if input.value > size of display
+//let's try adjust font size if input.value > size of display with ChatGPT help
 function autoResize() {
-    //console.log('сработала функция autoresize');
-  
+     
     let fontSize = parseInt(getComputedStyle(displayNumber).getPropertyValue("font-size"));
     let width = displayNumber.offsetWidth;
     let textWidth = getTextWidth(displayNumber.value, fontSize + "px " + getComputedStyle(displayNumber).getPropertyValue("font-family"));
-    8
-
+    
     while (textWidth+10 > width) {
         fontSize--;
         textWidth = getTextWidth(displayNumber.value, fontSize + "px " + getComputedStyle(displayNumber).getPropertyValue("font-family"));
-        console.log('width:', width, 'textWidth:', textWidth);
     }
     
     displayNumber.style.fontSize = fontSize + "px";
